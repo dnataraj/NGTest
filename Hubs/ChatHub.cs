@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using NGTest.Storage;
 
 namespace NGTest.Hubs 
 {
@@ -11,15 +12,23 @@ namespace NGTest.Hubs
         private readonly ILogger _logger;
         private static Dictionary<string, string> _connected = new Dictionary<string, string>();
 
-        public ChatHub(ILogger<ChatHub> logger) 
+        private readonly StorageHelper _storageHelper;
+
+        public ChatHub(ILogger<ChatHub> logger, StorageHelper storageHelper) 
         {
             //_logger = loggerFactory.CreateLogger<ChatHub>();
             _logger = logger;
+            _storageHelper = storageHelper;
+
         }
-        public async Task BroadcastMessage(string user, string message) 
+        public async Task BroadcastMessage(string user, string message, string timestamp) 
         {
             _logger.LogInformation($"Broadcasting [{message}] from user : {user}");
-            await Clients.All.SendAsync("ReceiveBroadcast", user, message);
+
+            // storage message
+            await _storageHelper.StorageChatMessageAsync(Context.ConnectionId, user, message, timestamp);
+
+            await Clients.All.SendAsync("ReceiveBroadcast", user, message, timestamp);
         }
 
         public async Task BroadcastConnectedUsers() 
