@@ -25,7 +25,7 @@ export class Home extends Component {
     // register handlers, and start
     connection.on("ReceiveBroadcast", (user, message) => {
       const recvd = `${user} --> ${message}`;
-      this.updateConversations(recvd)
+      this.updateConversations(recvd);
     });
     
     connection.start().then(() => console.log("Ready to go...")).catch(err => console.error(err.toString()));
@@ -47,8 +47,9 @@ export class Home extends Component {
   }
 
   updateConversations(text) {
-    const conversations = this.state.conversations.push(text);
-    this.setState({conversations});    
+    const chat = this.state.conversation.slice()
+    chat.push(text);
+    this.setState({conversation: chat});    
   }
 
   sendMessage(event) {
@@ -57,7 +58,7 @@ export class Home extends Component {
     const message = data.get("message");
     
     this.state.connection.invoke('BroadcastMessage', this.state.handle, message).catch(err => console.error(err.toString()));    
-    this.updateConversations(message);
+    //this.updateConversations(message);
   }
 
   displayName = Home.name
@@ -87,7 +88,7 @@ export class Home extends Component {
             <h2>The conversation so far...</h2>
             <ul>
               {
-                this.state.conversation.map( text => (<li>{text}</li>))
+                this.state.conversation.map( (text, index) => (<li key={index}>{text}</li>))
               }
             </ul>
           </React.Fragment>      
@@ -97,7 +98,7 @@ export class Home extends Component {
         <div>
           <p>What would you like to say?</p>
           <form onSubmit={this.sendMessage}>
-            <input type="text" name="message" />
+            <input type="text" name="message" defaultValue="" />
             <input type="submit" value="Send" />
           </form>
         </div>
