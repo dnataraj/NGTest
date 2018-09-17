@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NGTest.Hubs;
 
 namespace NGTest
 {
@@ -27,6 +28,9 @@ namespace NGTest
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddSignalR().AddAzureSignalR();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +49,12 @@ namespace NGTest
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            app.UseAzureSignalR(routes =>
+                {
+                    routes.MapHub<ChatHub>("/chat");        
+                }
+            );
 
             app.UseMvc(routes =>
             {
