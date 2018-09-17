@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -48,9 +49,20 @@ namespace NGTest.Hubs
 
         public override async Task OnConnectedAsync()
         {
+            _logger.LogDebug($"Welcoming connection {Context.ConnectionId}...");
             //await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
             await base.OnConnectedAsync();
         }   
         
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            if (_connected.TryGetValue(Context.ConnectionId, out string user)) 
+            {
+                _logger.LogDebug($"Removing {user} from connected users...");
+                _connected.Remove(Context.ConnectionId);
+                await BroadcastConnectedUsers();
+            }
+            await base.OnDisconnectedAsync(exception);
+        }
     }
 }

@@ -21,7 +21,7 @@ export class NavMenu extends Component {
                 {
                   this.props.users !== undefined && this.props.users.length > 0 ?
                   <ul>
-                      {this.props.users.map( user => (<li>{user}</li>))}
+                      {this.props.users.map( (user, index) => (<li key={index}>{user}</li>))}
                   </ul>
                   :
                   null
