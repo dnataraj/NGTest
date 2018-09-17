@@ -59,7 +59,6 @@ namespace NGTest.Hubs
         public override async Task OnConnectedAsync()
         {
             _logger.LogDebug($"Welcoming connection {Context.ConnectionId}...");
-            //await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
             await base.OnConnectedAsync();
         }   
         
