@@ -8,7 +8,7 @@ export class Home extends Component {
     super(props);
     this.state = {
       connection: null,
-      current: null,
+      message: '',
       conversation: [],
       connectedUsers: [],
       handle: null
@@ -24,10 +24,12 @@ export class Home extends Component {
 
     // register handlers, and start
     connection.on("ReceiveBroadcast", (user, message) => {
-      const recvd = `${user} --> ${message}`;
+      const recvd = `[${new Date().toUTCString()}] ${user} --> ${message}`;
       this.updateConversations(recvd);
     });
     
+    connection.on("UpdateConnectedUsers", (users) => this.updateConnectedUsers(users));
+
     connection.start().then(() => console.log("Ready to go...")).catch(err => console.error(err.toString()));
 
     this.setState({connection});
@@ -42,7 +44,10 @@ export class Home extends Component {
     this.state.connection.invoke('Connect', userHandle).catch(err => console.error(err.toString()));
 
     this.setState({handle: userHandle}, () => {
-      // update list of connected users
+      // update list of connected uses
+      this.state.connection.invoke('BroadcastConnectedUsers')
+      //.then(users => this.props.showUsers(users))
+      .catch(err => console.error(err.toString()));
     });
   }
 
@@ -52,13 +57,17 @@ export class Home extends Component {
     this.setState({conversation: chat});    
   }
 
+  updateConnectedUsers(users) {
+    this.props.showUsers(users);
+  }
+
   sendMessage(event) {
     event.preventDefault();
-    const data = new FormData(event.target);
-    const message = data.get("message");
-    
-    this.state.connection.invoke('BroadcastMessage', this.state.handle, message).catch(err => console.error(err.toString()));    
+    this.state.connection.invoke('BroadcastMessage', this.state.handle, this.state.message).catch(err => console.error(err.toString()));    
     //this.updateConversations(message);
+
+    this.setState({message: ''});
+
   }
 
   displayName = Home.name
@@ -80,6 +89,13 @@ export class Home extends Component {
           :
           <React.Fragment>
             <h1>Hello {this.state.handle}!</h1>
+            <div>
+              <p>What would you like to say?</p>
+              <form onSubmit={this.sendMessage}>
+                <input type="text" name="message" value={this.state.message} onChange={event => this.setState({ message: event.target.value })} />
+                <input type="submit" value="Send" />
+              </form>
+            </div>
           </React.Fragment>  
         }
         {
@@ -95,13 +111,6 @@ export class Home extends Component {
           :
           null           
         }
-        <div>
-          <p>What would you like to say?</p>
-          <form onSubmit={this.sendMessage}>
-            <input type="text" name="message" defaultValue="" />
-            <input type="submit" value="Send" />
-          </form>
-        </div>
       </div>
     );
   }

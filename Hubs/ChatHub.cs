@@ -8,7 +8,7 @@ namespace NGTest.Hubs
     public class ChatHub : Hub
     {
         private readonly ILogger _logger;
-        private Dictionary<string, string> _connected = new Dictionary<string, string>();
+        private static Dictionary<string, string> _connected = new Dictionary<string, string>();
 
         public ChatHub(ILogger<ChatHub> logger) 
         {
@@ -20,6 +20,12 @@ namespace NGTest.Hubs
             _logger.LogInformation($"Broadcasting [{message}] from user : {user}");
             await Clients.All.SendAsync("ReceiveBroadcast", user, message);
         }
+
+        public async Task BroadcastConnectedUsers() 
+        {
+            _logger.LogInformation($"Updating connected users to all clients...");
+            await Clients.All.SendAsync("UpdateConnectedUsers", GetConnectedUsers());
+        }        
 
         public void Connect(string user)
         {
@@ -33,8 +39,10 @@ namespace NGTest.Hubs
         }
 
         public string[] GetConnectedUsers() {
-            string[] users = {};
+            _logger.LogDebug("Getting connected users...");
+            string[] users = new string[_connected.Values.Count];
             _connected.Values.CopyTo(users, 0);
+            _logger.LogDebug($"{users.Length} users have connected...");
             return users;
         }
 

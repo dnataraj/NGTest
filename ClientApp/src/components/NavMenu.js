@@ -14,25 +14,19 @@ export class NavMenu extends Component {
           <Navbar.Brand>
             <Link to={'/'}>Who's Online?</Link>
           </Navbar.Brand>
-          <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
-            <LinkContainer to={'/'} exact>
               <NavItem>
-                <Glyphicon glyph='home' /> Home
+                {
+                  this.props.users !== undefined && this.props.users.length > 0 ?
+                  <ul>
+                      {this.props.users.map( user => (<li>{user}</li>))}
+                  </ul>
+                  :
+                  null
+                }
               </NavItem>
-            </LinkContainer>
-            <LinkContainer to={'/counter'}>
-              <NavItem>
-                <Glyphicon glyph='education' /> Counter
-              </NavItem>
-            </LinkContainer>
-            <LinkContainer to={'/fetchdata'}>
-              <NavItem>
-                <Glyphicon glyph='th-list' /> Fetch data
-              </NavItem>
-            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
