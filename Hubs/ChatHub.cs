@@ -7,7 +7,7 @@ using NGTest.Storage;
 
 namespace NGTest.Hubs 
 {
-    public class ChatHub : Hub
+    public class ChatHub : Hub<IChatClient>
     {
         private readonly ILogger _logger;
         private static Dictionary<string, string> _connected = new Dictionary<string, string>();
@@ -32,14 +32,14 @@ namespace NGTest.Hubs
             // storage message
             await _storageHelper.StorageChatMessageAsync(Context.ConnectionId, user, message, timestamp);
 
-            await Clients.All.SendAsync("ReceiveBroadcast", user, message, timestamp);
+            await Clients.All.ReceiveBroadcast(user, message, timestamp);
         }
 
         // Broadcast all connected users, so each user can see who is online.
         public async Task BroadcastConnectedUsers() 
         {
             _logger.LogInformation($"Updating connected users to all clients...");
-            await Clients.All.SendAsync("UpdateConnectedUsers", GetConnectedUsers());
+            await Clients.All.UpdateConnectedUsers(GetConnectedUsers());
         }        
 
         // Clients call Connect in order to allow the hub to keep track of 
