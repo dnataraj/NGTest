@@ -21,6 +21,10 @@ namespace NGTest.Hubs
             _storageHelper = storageHelper;
 
         }
+        
+        // Broadcase message from one client to all, so that that there is a global view of messages.
+        // Messages are persisted to Azure Table Storage - and will save the user, the message itself 
+        // and a timestamp.
         public async Task BroadcastMessage(string user, string message, string timestamp) 
         {
             _logger.LogInformation($"Broadcasting [{message}] from user : {user}");
@@ -31,12 +35,15 @@ namespace NGTest.Hubs
             await Clients.All.SendAsync("ReceiveBroadcast", user, message, timestamp);
         }
 
+        // Broadcast all connected users, so each user can see who is online.
         public async Task BroadcastConnectedUsers() 
         {
             _logger.LogInformation($"Updating connected users to all clients...");
             await Clients.All.SendAsync("UpdateConnectedUsers", GetConnectedUsers());
         }        
 
+        // Clients call Connect in order to allow the hub to keep track of 
+        // connected users internally.
         public void Connect(string user)
         {
             _logger.LogDebug("Calling connect!");
@@ -48,8 +55,7 @@ namespace NGTest.Hubs
             }
         }
 
-        public string[] GetConnectedUsers() {
-            _logger.LogDebug("Getting connected users...");
+        private string[] GetConnectedUsers() {
             string[] users = new string[_connected.Values.Count];
             _connected.Values.CopyTo(users, 0);
             _logger.LogDebug($"{users.Length} users have connected...");
@@ -61,7 +67,8 @@ namespace NGTest.Hubs
             _logger.LogDebug($"Welcoming connection {Context.ConnectionId}...");
             await base.OnConnectedAsync();
         }   
-        
+
+        // Update the internal connected user list as users disconnect from the Hub.        
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             if (_connected.TryGetValue(Context.ConnectionId, out string user)) 

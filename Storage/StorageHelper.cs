@@ -13,6 +13,7 @@ namespace NGTest.Storage
         private readonly CloudStorageAccount _cloudStorageAccount;
         private readonly CloudTable _messageTable;
 
+        // Initialize access to the cloud storage account, and create a Message table, if needed.
         public StorageHelper(ILogger<StorageHelper> logger, IConfiguration configuration) 
         {
             _logger = logger;
@@ -25,6 +26,8 @@ namespace NGTest.Storage
             _messageTable.CreateIfNotExistsAsync().Wait(); // is this a good idea?
         }
 
+        // Package message attributes into MessageEntity and insert into our
+        // Azure Table
         public async Task StorageChatMessageAsync(string id, string user, string message, string timestamp) 
         {
             MessageEntity messageEntity = new MessageEntity(id, user, timestamp);
