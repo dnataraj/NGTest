@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NGTest.Hubs;
 using NGTest.Storage;
+using Autofac;
 
 namespace NGTest
 {
@@ -33,8 +34,14 @@ namespace NGTest
             services.AddSignalR().AddAzureSignalR();
             // Register the dependency to StorageHelper with the service container
             // so that it can be injected as needed
-            services.AddSingleton<StorageHelper>();
+            
+            //services.AddSingleton<StorageHelper>();
 
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder) 
+        {
+            builder.RegisterModule(new AutofacModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
