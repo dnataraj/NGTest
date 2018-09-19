@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest  ApplicationTypeName="sfchatType" ApplicationTypeVersion="1.0.0"
+                      xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+   <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="chatPkg" ServiceManifestVersion="1.0.0" />
+        <Policies>
+            <ContainerHostPolicies CodePackageRef="Code">
+                 <RepositoryCredentials AccountName="ngtestregistry" Password="aRWGC88jclnpRVNPZ1+0dhNnSISkNuts" PasswordEncrypted="false"/>
+                <PortBinding ContainerPort="5000" EndpointRef="chatEndpoint"/>
+            </ContainerHostPolicies>
+        </Policies>
+   </ServiceManifestImport>
+   
+   <DefaultServices>
+      <Service Name="chat">
+         <StatelessService ServiceTypeName="chatType" InstanceCount="1">
+            <SingletonPartition />
+         </StatelessService>
+      </Service>
+   </DefaultServices>
+   
+</ApplicationManifest>
