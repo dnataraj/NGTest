@@ -33,3 +33,7 @@
 
 - Scaffolding based on the ASP.NET Core 2.1 React template (created with dotnet new)
 - Service Fabric service created with yeoman generators for container-based service
+
+## Known Issues
+- There is a client disconnect issue if the server is idle for a while, need to tinker with keepAlive settings etc. (or perhaps its something else - Azure SignalR is still not GA)
+- The SF cluster is unable to instantiate a container - because of image OS discrepancies. Can be fixed.
