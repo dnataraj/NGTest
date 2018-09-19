@@ -10,7 +10,7 @@
    <CodePackage Name="code" Version="1.0.0">
       <EntryPoint>
          <ContainerHost>
-            <ImageName>ngchat</ImageName>
+            <ImageName>ngtestregistry.azurecr.io/ngchat:latest</ImageName>
             <Commands></Commands>
          </ContainerHost>
       </EntryPoint>

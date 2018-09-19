@@ -27,6 +27,7 @@
 
 - Choice of container-based deployment to Service Fabric Cluster
     - Easier to package ASP.NET Core 2.0 + React SPA + Deps
+    - The user secrets for development (e.g connection strings), are part of the image!
     
 ## Implementation Notes
 
