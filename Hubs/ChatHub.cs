@@ -10,15 +10,16 @@ namespace NGTest.Hubs
     public class ChatHub : Hub<IChatClient>
     {
         private readonly ILogger _logger;
-        private static Dictionary<string, string> _connected = new Dictionary<string, string>();
 
         private readonly StorageHelper _storageHelper;
+        private readonly IConnectedUsers _connectedUsers;
 
-        public ChatHub(ILogger<ChatHub> logger, StorageHelper storageHelper) 
+        public ChatHub(ILogger<ChatHub> logger, StorageHelper storageHelper, IConnectedUsers connectedUsers) 
         {
             //_logger = loggerFactory.CreateLogger<ChatHub>();
             _logger = logger;
             _storageHelper = storageHelper;
+            _connectedUsers = connectedUsers;
 
         }
         
@@ -39,7 +40,7 @@ namespace NGTest.Hubs
         public async Task BroadcastConnectedUsers() 
         {
             _logger.LogInformation($"Updating connected users to all clients...");
-            await Clients.All.UpdateConnectedUsers(GetConnectedUsers());
+            await Clients.All.UpdateConnectedUsers(_connectedUsers.GetConnectedUsers());
         }        
 
         // Clients call Connect in order to allow the hub to keep track of 
@@ -47,19 +48,7 @@ namespace NGTest.Hubs
         public void Connect(string user)
         {
             _logger.LogDebug("Calling connect!");
-            var id = Context.ConnectionId;
-            if (!_connected.ContainsKey(id))
-            {
-                _logger.LogInformation($"Adding {user} as connected...");
-                _connected.Add(id, user);
-            }
-        }
-
-        private string[] GetConnectedUsers() {
-            string[] users = new string[_connected.Values.Count];
-            _connected.Values.CopyTo(users, 0);
-            _logger.LogDebug($"{users.Length} users have connected...");
-            return users;
+            _connectedUsers.AddUser(Context.ConnectionId, user);
         }
 
         public override async Task OnConnectedAsync()
@@ -71,10 +60,11 @@ namespace NGTest.Hubs
         // Update the internal connected user list as users disconnect from the Hub.        
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            if (_connected.TryGetValue(Context.ConnectionId, out string user)) 
+            var returned = _connectedUsers.DisconnectUser(Context.ConnectionId);
+
+            if (returned.removed) 
             {
-                _logger.LogDebug($"Removing {user} from connected users...");
-                _connected.Remove(Context.ConnectionId);
+                _logger.LogDebug($"Removing {returned.user} from connected users...");
                 await BroadcastConnectedUsers();
             }
             await base.OnDisconnectedAsync(exception);

@@ -33,6 +33,7 @@ namespace NGTest
             services.AddSignalR().AddAzureSignalR();
             // Register the dependency to StorageHelper with the service container
             // so that it can be injected as needed
+            services.AddSingleton<IConnectedUsers, ConnectedUsers>();
             services.AddSingleton<StorageHelper>();
 
         }
