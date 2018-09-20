@@ -30,7 +30,7 @@ namespace NGTest
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddSignalR().AddAzureSignalR();
+            services.AddSignalR(); //.AddAzureSignalR();
             // Register the dependency to StorageHelper with the service container
             // so that it can be injected as needed
             services.AddSingleton<IConnectedUsers, ConnectedUsers>();
@@ -55,7 +55,7 @@ namespace NGTest
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseAzureSignalR(routes =>
+            app.UseSignalR(routes =>
                 {
                     routes.MapHub<ChatHub>("/chat");        
                 }
