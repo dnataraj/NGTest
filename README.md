@@ -1,10 +1,11 @@
 # A minimal chat application to showcase ASP.Net Core, SignalR & Azure services
 
 ## Versions
+- Build with Visual Studio Code 1.27.2 on MacOS and Ubuntu 16.04
 - ASP.NET Core 2.1
 - Azure SignalR 1.0.0-*
 - Azure Storage 9.3.2
-- Docker for ASP.NET Core - microsoft/dotnet:2.1-sdk image
+- Docker-CE for ASP.NET Core - microsoft/dotnet:2.1-sdk image
 
 ## Design/Architectural Notes
 
@@ -12,6 +13,9 @@
     - Clear, up-to-date documentation (For example, compared to Unity)
     - Obvious support for ASP.NET Core with examples.
     - Integration with Service Fabric (if needed)
+    - Looked at Ninject / Unity and the conclusions here :
+    [Report](http://www.codinginstinct.com/2008/05/ioc-container-benchmark-rerevisted.html)
+    - Autofac authored by Blumhardt (Seq, Serilog)
 
 - Usage of strongly-type Hubs in SignalR
     - Clearer what interface the client supports
