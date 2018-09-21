@@ -41,3 +41,4 @@
 ## Known Issues
 - There is a client disconnect issue if the server is idle for a while, need to tinker with keepAlive settings etc. (or perhaps its something else - Azure SignalR is still not GA)
 - The SF cluster is unable to instantiate a container - because of image OS discrepancies. Can be fixed.
+- There seems to be an open issue provisioning containers onto an SF Linux cluster on Azure with SFCTL. Tracking this on Github [here](https://github.com/Microsoft/service-fabric-cli/issues/107)
